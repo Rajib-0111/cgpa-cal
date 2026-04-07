@@ -1,0 +1,1374 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CGPA Calculator — Aesthetic</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=DM+Sans:ital,opsz,wght@0,9..40,300;0,9..40,400;0,9..40,500;1,9..40,300&display=swap"
+      rel="stylesheet"
+    />
+    <style>
+      /* ══ DARK MODE — deep ocean midnight ══ */
+      :root {
+        --bg: #060d17;
+        --surface: #0c1623;
+        --surface2: #111f30;
+        --surface3: #172840;
+        --border: rgba(100, 180, 255, 0.08);
+        --border-hover: rgba(100, 200, 255, 0.22);
+        --accent: #38bdf8;
+        --accent2: #818cf8;
+        --accent3: #34d399;
+        --accent-dim: rgba(56, 189, 248, 0.12);
+        --accent-dim2: rgba(56, 189, 248, 0.05);
+        --text: #e8f4ff;
+        --text-muted: #6b9ab8;
+        --text-faint: #2a4a62;
+        --danger: #f87171;
+        --danger-dim: rgba(248, 113, 113, 0.1);
+        --radius: 18px;
+        --radius-sm: 12px;
+        --glow1: rgba(56, 189, 248, 0.18);
+        --glow2: rgba(129, 140, 248, 0.14);
+        --glow3: rgba(52, 211, 153, 0.1);
+      }
+
+      /* ══ LIGHT MODE — warm cream & terracotta ══ */
+      html.light {
+        --bg: #faf7f2;
+        --surface: #ffffff;
+        --surface2: #f5f0e8;
+        --surface3: #ede7d8;
+        --border: rgba(160, 120, 80, 0.12);
+        --border-hover: rgba(200, 90, 50, 0.25);
+        --accent: #c2500e;
+        --accent2: #7c6ea0;
+        --accent3: #2a8a6a;
+        --accent-dim: rgba(194, 80, 14, 0.09);
+        --accent-dim2: rgba(194, 80, 14, 0.04);
+        --text: #1c1008;
+        --text-muted: #7a5c40;
+        --text-faint: #c4a882;
+        --danger: #c0392b;
+        --danger-dim: rgba(192, 57, 43, 0.08);
+        --glow1: rgba(194, 80, 14, 0.15);
+        --glow2: rgba(124, 110, 160, 0.12);
+        --glow3: rgba(42, 138, 106, 0.1);
+      }
+
+      /* ── Theme toggle button ── */
+      .theme-toggle {
+        position: fixed;
+        top: 1.25rem;
+        right: 1.25rem;
+        z-index: 100;
+        width: 44px;
+        height: 44px;
+        border-radius: 50%;
+        border: 1px solid var(--border-hover);
+        background: var(--surface);
+        cursor: pointer;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        transition:
+          background 0.3s,
+          border-color 0.3s,
+          transform 0.2s,
+          box-shadow 0.3s;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.2);
+      }
+      .theme-toggle:hover {
+        transform: scale(1.08) rotate(15deg);
+        box-shadow: 0 4px 24px var(--glow1);
+        border-color: var(--accent);
+      }
+      .theme-toggle svg {
+        width: 18px;
+        height: 18px;
+        transition:
+          opacity 0.25s,
+          transform 0.35s;
+      }
+      .icon-moon {
+        display: block;
+      }
+      .icon-sun {
+        display: none;
+      }
+      html.light .icon-moon {
+        display: none;
+      }
+      html.light .icon-sun {
+        display: block;
+      }
+
+      *,
+      *::before,
+      *::after {
+        box-sizing: border-box;
+        margin: 0;
+        padding: 0;
+      }
+
+      html {
+        scroll-behavior: smooth;
+      }
+
+      body {
+        background: var(--bg);
+        color: var(--text);
+        font-family: "DM Sans", sans-serif;
+        font-size: 15px;
+        line-height: 1.6;
+        min-height: 100vh;
+        overflow-x: hidden;
+        transition:
+          background 0.35s ease,
+          color 0.35s ease;
+      }
+
+      /* Background — deep ocean aurora */
+      body::before {
+        content: "";
+        position: fixed;
+        top: -20vh;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 100vw;
+        height: 70vh;
+        background:
+          radial-gradient(
+            ellipse 55% 45% at 25% 0%,
+            rgba(56, 189, 248, 0.1) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 45% 35% at 78% 8%,
+            rgba(129, 140, 248, 0.09) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 35% 28% at 52% 4%,
+            rgba(52, 211, 153, 0.06) 0%,
+            transparent 50%
+          );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      body::after {
+        content: "";
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        height: 40vh;
+        background: radial-gradient(
+          ellipse 50% 55% at 75% 100%,
+          rgba(129, 140, 248, 0.07) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+        z-index: 0;
+      }
+
+      html.light body::before {
+        background:
+          radial-gradient(
+            ellipse 55% 45% at 25% 0%,
+            rgba(194, 80, 14, 0.1) 0%,
+            transparent 60%
+          ),
+          radial-gradient(
+            ellipse 45% 35% at 78% 8%,
+            rgba(124, 110, 160, 0.09) 0%,
+            transparent 55%
+          ),
+          radial-gradient(
+            ellipse 35% 28% at 52% 4%,
+            rgba(42, 138, 106, 0.06) 0%,
+            transparent 50%
+          );
+      }
+      html.light body::after {
+        background: radial-gradient(
+          ellipse 50% 55% at 75% 100%,
+          rgba(124, 110, 160, 0.08) 0%,
+          transparent 70%
+        );
+      }
+
+      .sem-card,
+      .result-hero,
+      .breakdown-wrap,
+      .stat-card,
+      .formula-pill,
+      .btn,
+      .header-badge,
+      .field-wrap input,
+      .page,
+      .result-section {
+        transition:
+          background 0.3s ease,
+          border-color 0.3s ease,
+          color 0.3s ease,
+          box-shadow 0.3s ease;
+      }
+
+      .page {
+        position: relative;
+        z-index: 1;
+        max-width: 760px;
+        margin: 0 auto;
+        padding: 3rem 1.25rem 4rem;
+      }
+
+      /* ── Header ── */
+      .header {
+        margin-bottom: 3rem;
+        animation: fadeUp 0.6s ease both;
+      }
+
+      .header-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: var(--accent-dim2);
+        border: 1px solid rgba(56, 189, 248, 0.2);
+        border-radius: 100px;
+        padding: 5px 14px;
+        font-size: 12px;
+        font-weight: 500;
+        color: var(--accent);
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        margin-bottom: 1.25rem;
+      }
+
+      html.light .header-badge {
+        border-color: rgba(194, 80, 14, 0.22);
+      }
+
+      .header-badge .dot {
+        width: 6px;
+        height: 6px;
+        background: var(--accent);
+        border-radius: 50%;
+        animation: pulse 2s ease infinite;
+      }
+
+      h1 {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(2.6rem, 7vw, 4.2rem);
+        font-weight: 700;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+        color: var(--text);
+        margin-bottom: 0.75rem;
+      }
+
+      h1 span {
+        color: var(--accent);
+      }
+
+      .header-sub {
+        font-size: 15px;
+        color: var(--text-muted);
+        font-weight: 300;
+        max-width: 480px;
+      }
+
+      /* ── Formula pill ── */
+      .formula-pill {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        margin-top: 1.25rem;
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: 100px;
+        padding: 8px 18px;
+        font-size: 13px;
+        color: var(--text-muted);
+        font-family: "DM Sans", sans-serif;
+      }
+
+      .formula-pill strong {
+        color: var(--accent);
+        font-weight: 500;
+      }
+
+      /* ── Controls bar ── */
+      .controls-bar {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 1.25rem;
+        gap: 10px;
+        flex-wrap: wrap;
+        animation: fadeUp 0.6s 0.1s ease both;
+      }
+
+      .controls-label {
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+      }
+
+      .controls-right {
+        display: flex;
+        gap: 8px;
+        align-items: center;
+      }
+
+      /* ── Buttons ── */
+      .btn {
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+        border: none;
+        cursor: pointer;
+        font-family: "DM Sans", sans-serif;
+        font-size: 14px;
+        font-weight: 500;
+        border-radius: var(--radius-sm);
+        transition: all 0.18s ease;
+        white-space: nowrap;
+      }
+
+      .btn-ghost {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        color: var(--text-muted);
+        padding: 8px 14px;
+      }
+      .btn-ghost:hover {
+        border-color: var(--border-hover);
+        color: var(--text);
+        background: var(--surface2);
+      }
+
+      .btn-add {
+        background: var(--accent-dim);
+        border: 1px solid rgba(56, 189, 248, 0.22);
+        color: var(--accent);
+        padding: 8px 16px;
+      }
+      .btn-add:hover {
+        background: rgba(56, 189, 248, 0.18);
+        transform: translateY(-1px);
+      }
+      html.light .btn-add {
+        border-color: rgba(194, 80, 14, 0.22);
+      }
+      html.light .btn-add:hover {
+        background: rgba(194, 80, 14, 0.12);
+      }
+
+      .btn-calc {
+        background: linear-gradient(
+          135deg,
+          #0ea5e9 0%,
+          #6366f1 55%,
+          #06b6d4 100%
+        );
+        color: #ffffff;
+        padding: 14px 28px;
+        font-size: 15px;
+        font-weight: 600;
+        border-radius: var(--radius-sm);
+        width: 100%;
+        justify-content: center;
+        letter-spacing: 0.02em;
+        margin-top: 1.5rem;
+        box-shadow:
+          0 0 40px rgba(56, 189, 248, 0.2),
+          0 0 20px rgba(99, 102, 241, 0.15);
+        border: none;
+      }
+      .btn-calc:hover {
+        transform: translateY(-2px);
+        box-shadow:
+          0 8px 40px rgba(56, 189, 248, 0.35),
+          0 4px 20px rgba(99, 102, 241, 0.25);
+        filter: brightness(1.08);
+      }
+      .btn-calc:active {
+        transform: translateY(0);
+      }
+      html.light .btn-calc {
+        background: linear-gradient(
+          135deg,
+          #c2500e 0%,
+          #7c6ea0 55%,
+          #2a8a6a 100%
+        );
+        color: #fff;
+        box-shadow:
+          0 0 40px rgba(194, 80, 14, 0.2),
+          0 0 20px rgba(124, 110, 160, 0.14);
+      }
+      html.light .btn-calc:hover {
+        box-shadow:
+          0 8px 40px rgba(194, 80, 14, 0.32),
+          0 4px 20px rgba(124, 110, 160, 0.22);
+      }
+
+      .btn-reset {
+        background: transparent;
+        border: 1px solid var(--border);
+        color: var(--text-faint);
+        padding: 8px 14px;
+        font-size: 13px;
+      }
+      .btn-reset:hover {
+        border-color: var(--danger);
+        color: var(--danger);
+        background: var(--danger-dim);
+      }
+
+      /* ── Semester cards ── */
+      .sem-list {
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        animation: fadeUp 0.6s 0.15s ease both;
+      }
+
+      .sem-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        padding: 1.1rem 1.25rem;
+        transition:
+          border-color 0.2s ease,
+          transform 0.2s ease;
+        animation: slideIn 0.3s ease both;
+      }
+
+      .sem-card:hover {
+        border-color: var(--border-hover);
+      }
+
+      .sem-card.highlight {
+        border-color: rgba(56, 189, 248, 0.22);
+        background: linear-gradient(
+          135deg,
+          var(--surface) 0%,
+          rgba(56, 189, 248, 0.03) 100%
+        );
+      }
+      html.light .sem-card.highlight {
+        border-color: rgba(194, 80, 14, 0.18);
+        background: linear-gradient(
+          135deg,
+          var(--surface) 0%,
+          rgba(194, 80, 14, 0.02) 100%
+        );
+      }
+
+      .sem-card-top {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        margin-bottom: 12px;
+      }
+
+      .sem-number {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+      }
+
+      .sem-index {
+        width: 28px;
+        height: 28px;
+        background: var(--accent-dim2);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-family: "DM Sans", sans-serif;
+        font-size: 12px;
+        font-weight: 600;
+        color: var(--accent);
+      }
+      html.light .sem-index {
+        border-color: rgba(194, 80, 14, 0.2);
+      }
+
+      .sem-title {
+        font-family: "DM Sans", sans-serif;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--text);
+        letter-spacing: 0.02em;
+      }
+
+      .sem-live {
+        font-size: 11px;
+        color: var(--text-faint);
+        font-weight: 300;
+        transition: color 0.2s;
+      }
+
+      .sem-live.active {
+        color: var(--accent);
+      }
+
+      .btn-remove {
+        background: none;
+        border: none;
+        cursor: pointer;
+        color: var(--text-faint);
+        font-size: 18px;
+        line-height: 1;
+        padding: 2px 6px;
+        border-radius: 6px;
+        transition: all 0.15s ease;
+      }
+      .btn-remove:hover {
+        color: var(--danger);
+        background: var(--danger-dim);
+      }
+
+      .sem-fields {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 10px;
+      }
+
+      .field-wrap {
+        display: flex;
+        flex-direction: column;
+        gap: 5px;
+      }
+
+      .field-label {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-faint);
+      }
+
+      .field-wrap input {
+        background: var(--surface2);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        color: var(--text);
+        font-family: "Syne", sans-serif;
+        font-size: 18px;
+        font-weight: 600;
+        padding: 10px 14px;
+        width: 100%;
+        transition:
+          border-color 0.2s ease,
+          background 0.2s ease;
+        -moz-appearance: textfield;
+      }
+      .field-wrap input::-webkit-outer-spin-button,
+      .field-wrap input::-webkit-inner-spin-button {
+        -webkit-appearance: none;
+      }
+      .field-wrap input::placeholder {
+        color: var(--text-faint);
+        font-weight: 400;
+        font-size: 15px;
+      }
+      .field-wrap input:focus {
+        outline: none;
+        border-color: rgba(56, 189, 248, 0.5);
+        background: rgba(56, 189, 248, 0.04);
+        box-shadow: 0 0 0 3px rgba(56, 189, 248, 0.08);
+      }
+      html.light .field-wrap input:focus {
+        border-color: rgba(194, 80, 14, 0.45);
+        background: rgba(194, 80, 14, 0.03);
+        box-shadow: 0 0 0 3px rgba(194, 80, 14, 0.07);
+      }
+      .field-wrap input.error {
+        border-color: var(--danger);
+      }
+
+      /* ── Result section ── */
+      .result-section {
+        margin-top: 2rem;
+        animation: fadeUp 0.5s ease both;
+      }
+
+      .result-hero {
+        background: var(--surface);
+        border: 1px solid rgba(56, 189, 248, 0.18);
+        border-radius: var(--radius);
+        padding: 2.5rem 2rem;
+        text-align: center;
+        position: relative;
+        overflow: hidden;
+        margin-bottom: 1rem;
+      }
+
+      html.light .result-hero {
+        border-color: rgba(194, 80, 14, 0.18);
+        box-shadow: 0 4px 40px rgba(194, 80, 14, 0.07);
+      }
+
+      .result-hero::before {
+        content: "";
+        position: absolute;
+        top: -50px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 280px;
+        height: 120px;
+        background: radial-gradient(
+          ellipse,
+          rgba(56, 189, 248, 0.15) 0%,
+          rgba(129, 140, 248, 0.09) 40%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      html.light .result-hero::before {
+        background: radial-gradient(
+          ellipse,
+          rgba(194, 80, 14, 0.12) 0%,
+          rgba(124, 110, 160, 0.07) 40%,
+          transparent 70%
+        );
+      }
+
+      .result-hero::after {
+        content: "";
+        position: absolute;
+        bottom: -30px;
+        right: -30px;
+        width: 160px;
+        height: 160px;
+        background: radial-gradient(
+          ellipse,
+          rgba(52, 211, 153, 0.08) 0%,
+          transparent 70%
+        );
+        pointer-events: none;
+      }
+
+      html.light .result-hero::after {
+        background: radial-gradient(
+          ellipse,
+          rgba(42, 138, 106, 0.07) 0%,
+          transparent 70%
+        );
+      }
+
+      .result-label {
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.15em;
+        color: var(--text-muted);
+        margin-bottom: 0.75rem;
+      }
+
+      .result-cgpa {
+        font-family: "Cormorant Garamond", serif;
+        font-size: clamp(4rem, 14vw, 7rem);
+        font-weight: 700;
+        font-style: italic;
+        line-height: 1;
+        background: linear-gradient(
+          135deg,
+          #38bdf8 0%,
+          #818cf8 55%,
+          #34d399 100%
+        );
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        background-clip: text;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.75rem;
+      }
+
+      html.light .result-cgpa {
+        background: linear-gradient(
+          135deg,
+          #c2500e 0%,
+          #7c6ea0 50%,
+          #2a8a6a 100%
+        );
+        -webkit-background-clip: text;
+        background-clip: text;
+      }
+
+      .result-grade {
+        display: inline-block;
+        background: var(--accent-dim);
+        border: 1px solid rgba(56, 189, 248, 0.25);
+        border-radius: 100px;
+        padding: 5px 18px;
+        font-size: 13px;
+        font-weight: 500;
+        color: var(--accent);
+        letter-spacing: 0.06em;
+      }
+
+      html.light .result-grade {
+        border-color: rgba(194, 80, 14, 0.25);
+      }
+
+      .result-stats {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 10px;
+        margin-bottom: 1.25rem;
+      }
+
+      .stat-card {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius-sm);
+        padding: 1rem;
+        text-align: center;
+      }
+
+      .stat-val {
+        font-family: "Syne", sans-serif;
+        font-size: 1.5rem;
+        font-weight: 700;
+        color: var(--text);
+        display: block;
+        margin-bottom: 2px;
+      }
+
+      .stat-lbl {
+        font-size: 11px;
+        text-transform: uppercase;
+        letter-spacing: 0.07em;
+        color: var(--text-faint);
+        font-weight: 500;
+      }
+
+      /* ── Breakdown table ── */
+      .breakdown-wrap {
+        background: var(--surface);
+        border: 1px solid var(--border);
+        border-radius: var(--radius);
+        overflow: hidden;
+      }
+
+      .breakdown-head {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 1rem 1.25rem;
+        border-bottom: 1px solid var(--border);
+      }
+
+      .breakdown-head-title {
+        font-family: "DM Sans", sans-serif;
+        font-size: 11px;
+        font-weight: 500;
+        text-transform: uppercase;
+        letter-spacing: 0.1em;
+        color: var(--text-muted);
+      }
+
+      .table-wrap {
+        overflow-x: auto;
+      }
+
+      table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 13px;
+      }
+
+      thead th {
+        padding: 10px 14px;
+        text-align: left;
+        font-size: 11px;
+        font-weight: 600;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        color: var(--text-faint);
+        border-bottom: 1px solid var(--border);
+        white-space: nowrap;
+      }
+
+      tbody tr {
+        border-bottom: 1px solid var(--border);
+        transition: background 0.15s ease;
+      }
+      tbody tr:last-child {
+        border-bottom: none;
+      }
+      tbody tr:hover {
+        background: rgba(255, 255, 255, 0.02);
+      }
+
+      tbody td {
+        padding: 12px 14px;
+        color: var(--text);
+        white-space: nowrap;
+      }
+
+      .td-sem {
+        font-family: "DM Sans", sans-serif;
+        font-weight: 500;
+        color: var(--text-muted);
+        font-size: 12px;
+        letter-spacing: 0.06em;
+      }
+
+      .td-sgpa {
+        font-family: "Cormorant Garamond", serif;
+        font-size: 17px;
+        font-weight: 600;
+      }
+
+      .bar-cell {
+        min-width: 140px;
+      }
+      .bar-track {
+        background: var(--surface2);
+        border-radius: 100px;
+        height: 5px;
+        margin-bottom: 3px;
+        overflow: hidden;
+      }
+      .bar-fill {
+        height: 100%;
+        background: linear-gradient(90deg, #38bdf8, #818cf8);
+        border-radius: 100px;
+        transition: width 0.6s cubic-bezier(0.34, 1.56, 0.64, 1);
+      }
+      html.light .bar-fill {
+        background: linear-gradient(90deg, #c2500e, #7c6ea0);
+      }
+      .bar-pct {
+        font-size: 11px;
+        color: var(--text-faint);
+      }
+
+      .error-msg {
+        background: var(--danger-dim);
+        border: 1px solid rgba(255, 107, 107, 0.2);
+        border-radius: var(--radius-sm);
+        padding: 10px 16px;
+        font-size: 13px;
+        color: var(--danger);
+        margin-top: 1rem;
+        display: none;
+      }
+      .error-msg.show {
+        display: block;
+      }
+
+      /* ── Empty state ── */
+      .default-badge {
+        background: rgba(129, 140, 248, 0.12);
+        border: 1px solid rgba(129, 140, 248, 0.28);
+        color: var(--accent2);
+        font-size: 9px;
+        font-weight: 600;
+        letter-spacing: 0.07em;
+        padding: 1px 7px;
+        border-radius: 100px;
+        text-transform: uppercase;
+      }
+      html.light .default-badge {
+        background: rgba(124, 110, 160, 0.1);
+        border-color: rgba(124, 110, 160, 0.25);
+      }
+
+      .empty-hint {
+        text-align: center;
+        padding: 2.5rem 1rem;
+        color: var(--text-faint);
+        font-size: 14px;
+        font-style: italic;
+      }
+
+      /* ── Footer ── */
+      .footer {
+        margin-top: 3rem;
+        text-align: center;
+        font-size: 12px;
+        color: var(--text-faint);
+      }
+
+      /* ── Animations ── */
+      @keyframes fadeUp {
+        from {
+          opacity: 0;
+          transform: translateY(20px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes slideIn {
+        from {
+          opacity: 0;
+          transform: translateY(10px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      @keyframes pulse {
+        0%,
+        100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.4;
+        }
+      }
+
+      @keyframes popIn {
+        0% {
+          transform: scale(0.92);
+          opacity: 0;
+        }
+        60% {
+          transform: scale(1.02);
+        }
+        100% {
+          transform: scale(1);
+          opacity: 1;
+        }
+      }
+
+      .pop {
+        animation: popIn 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+      }
+
+      /* ── Responsive ── */
+      @media (max-width: 520px) {
+        .page {
+          padding: 2rem 1rem 3rem;
+        }
+        .sem-fields {
+          grid-template-columns: 1fr 1fr;
+          gap: 8px;
+        }
+        .result-stats {
+          grid-template-columns: repeat(3, 1fr);
+          gap: 8px;
+        }
+        .stat-card {
+          padding: 0.75rem 0.5rem;
+        }
+        .stat-val {
+          font-size: 1.2rem;
+        }
+        .controls-bar {
+          flex-direction: column;
+          align-items: flex-start;
+        }
+        .btn-calc {
+          padding: 14px 20px;
+        }
+      }
+
+      @media (max-width: 380px) {
+        .sem-fields {
+          grid-template-columns: 1fr;
+        }
+        .result-stats {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <!-- Theme toggle -->
+    <button
+      class="theme-toggle"
+      onclick="toggleTheme()"
+      title="Toggle light/dark mode"
+    >
+      <!-- Moon icon (shown in dark mode) -->
+      <svg
+        class="icon-moon"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#818cf8"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <path d="M21 12.79A9 9 0 1 1 11.21 3a7 7 0 0 0 9.79 9.79z" />
+      </svg>
+      <!-- Sun icon (shown in light mode) -->
+      <svg
+        class="icon-sun"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="#c2500e"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+      >
+        <circle cx="12" cy="12" r="5" />
+        <line x1="12" y1="1" x2="12" y2="3" />
+        <line x1="12" y1="21" x2="12" y2="23" />
+        <line x1="4.22" y1="4.22" x2="5.64" y2="5.64" />
+        <line x1="18.36" y1="18.36" x2="19.78" y2="19.78" />
+        <line x1="1" y1="12" x2="3" y2="12" />
+        <line x1="21" y1="12" x2="23" y2="12" />
+        <line x1="4.22" y1="19.78" x2="5.64" y2="18.36" />
+        <line x1="18.36" y1="5.64" x2="19.78" y2="4.22" />
+      </svg>
+    </button>
+
+    <div class="page">
+      <!-- Header -->
+      <div class="header">
+        <div class="header-badge">
+          <span class="dot"></span>
+          Academic Tool
+        </div>
+        <h1>
+          Calculate your<br /><span
+            style="
+              font-style: italic;
+              background: linear-gradient(
+                135deg,
+                #38bdf8,
+                #818cf8 55%,
+                #34d399
+              );
+              -webkit-background-clip: text;
+              -webkit-text-fill-color: transparent;
+              background-clip: text;
+            "
+            >CGPA</span
+          >
+        </h1>
+        <p class="header-sub">
+          Enter your semester-wise SGPA and total credits to compute your
+          cumulative grade point average.
+        </p>
+        <div class="formula-pill">
+          CGPA = <strong>Σ (SGPA × Credits)</strong> ÷
+          <strong>Total Credits</strong>
+        </div>
+      </div>
+
+      <!-- Controls bar -->
+      <div class="controls-bar">
+        <span class="controls-label">Semesters</span>
+        <div class="controls-right">
+          <button class="btn btn-ghost btn-reset" onclick="resetAll()">
+            Reset all
+          </button>
+          <button class="btn btn-add" onclick="addSemester()">
+            + Add semester
+          </button>
+        </div>
+      </div>
+
+      <!-- Semester list -->
+      <div class="sem-list" id="semList"></div>
+
+      <!-- Error -->
+      <div class="error-msg" id="errorMsg"></div>
+
+      <!-- Calculate button -->
+      <button class="btn btn-calc" onclick="calculate()">
+        Calculate CGPA &rarr;
+      </button>
+
+      <!-- Result -->
+      <div
+        class="result-section"
+        id="resultSection"
+        style="display: none"
+      ></div>
+
+      <div class="footer">Built for students &bull; No data is stored</div>
+    </div>
+
+    <script>
+      // ── Theme toggle ──
+      function toggleTheme() {
+        const html = document.documentElement;
+        const isLight = html.classList.toggle("light");
+        localStorage.setItem("cgpa-theme", isLight ? "light" : "dark");
+      }
+      // Restore saved preference
+      (function () {
+        if (localStorage.getItem("cgpa-theme") === "light") {
+          document.documentElement.classList.add("light");
+        }
+      })();
+
+      let idCounter = 0;
+      const sems = [];
+
+      const DEFAULT_CREDITS = [21, 21, 21, 25, 24, 20];
+
+      function getDefaultCredits(semIndex) {
+        return DEFAULT_CREDITS[semIndex] ?? "";
+      }
+
+      function addSemester(sgpa = "", credits = null) {
+        const id = ++idCounter;
+        const semIndex = sems.length;
+        const defaultCred =
+          credits !== null ? credits : getDefaultCredits(semIndex);
+        sems.push({
+          id,
+          sgpa,
+          credits: defaultCred,
+          isDefault:
+            credits === null && DEFAULT_CREDITS[semIndex] !== undefined,
+        });
+        renderList();
+        setTimeout(() => {
+          const card = document.querySelector(`[data-id="${id}"]`);
+          if (card) card.style.animationDelay = "0s";
+        }, 10);
+      }
+
+      function removeSemester(id) {
+        const idx = sems.findIndex((s) => s.id === id);
+        if (idx > -1) sems.splice(idx, 1);
+        renderList();
+        clearResult();
+      }
+
+      function renderList() {
+        const list = document.getElementById("semList");
+        list.innerHTML = "";
+
+        if (sems.length === 0) {
+          list.innerHTML =
+            '<div class="empty-hint">No semesters added yet. Hit "+ Add semester" to begin.</div>';
+          return;
+        }
+
+        sems.forEach((s, i) => {
+          const card = document.createElement("div");
+          card.className = "sem-card";
+          card.dataset.id = s.id;
+          card.innerHTML = `
+      <div class="sem-card-top">
+        <div class="sem-number">
+          <div class="sem-index">${i + 1}</div>
+          <div>
+            <div class="sem-title">Semester ${i + 1}</div>
+          </div>
+        </div>
+        ${sems.length > 1 ? `<button class="btn-remove" onclick="removeSemester(${s.id})" title="Remove">&#x2715;</button>` : ""}
+      </div>
+      <div class="sem-fields">
+        <div class="field-wrap">
+          <label class="field-label">SGPA (0 – 10)</label>
+          <input type="number" id="sgpa_${s.id}" placeholder="8.5" min="0" max="10" step="0.01"
+            value="${s.sgpa}" oninput="syncValue(${s.id}, 'sgpa', this.value); liveUpdate();" />
+        </div>
+        <div class="field-wrap">
+          <label class="field-label" style="display:flex;align-items:center;gap:6px;">
+            Total credits
+            ${s.isDefault ? '<span class="default-badge">Default</span>' : ""}
+          </label>
+          <input type="number" id="cred_${s.id}" placeholder="24" min="1" step="1"
+            value="${s.credits}" oninput="syncValue(${s.id}, 'credits', this.value); markEdited(${s.id}); liveUpdate();" />
+        </div>
+      </div>`;
+          list.appendChild(card);
+        });
+      }
+
+      function markEdited(id) {
+        const s = sems.find((x) => x.id === id);
+        if (s) s.isDefault = false;
+        // remove badge from label without full re-render
+        const card = document.querySelector(`[data-id="${id}"]`);
+        if (card) {
+          const badge = card.querySelector(".default-badge");
+          if (badge) badge.remove();
+        }
+      }
+
+      function syncValue(id, field, val) {
+        const s = sems.find((x) => x.id === id);
+        if (s) s[field] = val;
+      }
+
+      function liveUpdate() {
+        // auto-calculate if all filled
+        const allFilled = sems.every((s) => {
+          const sg = document.getElementById(`sgpa_${s.id}`)?.value;
+          const cr = document.getElementById(`cred_${s.id}`)?.value;
+          return sg && cr;
+        });
+        if (allFilled && sems.length > 0) calculate(true);
+      }
+
+      function clearResult() {
+        document.getElementById("resultSection").style.display = "none";
+        document.getElementById("errorMsg").className = "error-msg";
+      }
+
+      function showError(msg) {
+        const el = document.getElementById("errorMsg");
+        el.textContent = msg;
+        el.className = "error-msg show";
+      }
+
+      function gradeLabel(cgpa) {
+        if (cgpa >= 9) return "Outstanding";
+        if (cgpa >= 8) return "Excellent";
+        if (cgpa >= 7) return "Very Good";
+        if (cgpa >= 6) return "Good";
+        if (cgpa >= 5) return "Average";
+        return "Below Average";
+      }
+
+      function calculate(silent = false) {
+        document.getElementById("errorMsg").className = "error-msg";
+        // clear red borders
+        document
+          .querySelectorAll("input.error")
+          .forEach((el) => el.classList.remove("error"));
+
+        const rows = [];
+        let totalWeighted = 0,
+          totalCredits = 0;
+        let firstError = null;
+
+        for (let i = 0; i < sems.length; i++) {
+          const s = sems[i];
+          const sgpaEl = document.getElementById(`sgpa_${s.id}`);
+          const credEl = document.getElementById(`cred_${s.id}`);
+          const sgpa = parseFloat(sgpaEl?.value);
+          const cred = parseFloat(credEl?.value);
+
+          if (isNaN(sgpa) || sgpa < 0 || sgpa > 10) {
+            if (!firstError) {
+              firstError = `Semester ${i + 1}: SGPA must be between 0 and 10.`;
+              sgpaEl?.classList.add("error");
+            }
+            continue;
+          }
+          if (isNaN(cred) || cred <= 0) {
+            if (!firstError) {
+              firstError = `Semester ${i + 1}: Credits must be a positive number.`;
+              credEl?.classList.add("error");
+            }
+            continue;
+          }
+
+          const weighted = sgpa * cred;
+          totalWeighted += weighted;
+          totalCredits += cred;
+          rows.push({ sem: i + 1, sgpa, cred, weighted });
+        }
+
+        if (firstError && !silent) {
+          showError(firstError);
+          return;
+        }
+        if (rows.length === 0) {
+          if (!silent) showError("Add at least one complete semester.");
+          return;
+        }
+
+        const cgpa = totalWeighted / totalCredits;
+        const highest = Math.max(...rows.map((r) => r.weighted));
+
+        const sec = document.getElementById("resultSection");
+        sec.style.display = "block";
+        sec.innerHTML = `
+    <div class="result-hero pop">
+      <div class="result-label">Your CGPA</div>
+      <div class="result-cgpa">${cgpa.toFixed(2)}</div>
+      <span class="result-grade">${gradeLabel(cgpa)}</span>
+    </div>
+
+    <div class="result-stats">
+      <div class="stat-card">
+        <span class="stat-val">${rows.length}</span>
+        <span class="stat-lbl">Semesters</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">${totalCredits}</span>
+        <span class="stat-lbl">Total Credits</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-val">${totalWeighted.toFixed(1)}</span>
+        <span class="stat-lbl">Weighted Sum</span>
+      </div>
+    </div>
+
+    <div class="breakdown-wrap">
+      <div class="breakdown-head">
+        <span class="breakdown-head-title">Semester breakdown</span>
+      </div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Sem</th>
+              <th>SGPA</th>
+              <th>Credits</th>
+              <th>Weighted</th>
+              <th class="bar-cell">Contribution</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${rows
+              .map((r) => {
+                const pct = ((r.weighted / totalWeighted) * 100).toFixed(1);
+                return `
+              <tr>
+                <td class="td-sem">SEM ${r.sem}</td>
+                <td class="td-sgpa">${r.sgpa.toFixed(2)}</td>
+                <td>${r.cred}</td>
+                <td>${r.weighted.toFixed(2)}</td>
+                <td class="bar-cell">
+                  <div class="bar-track">
+                    <div class="bar-fill" style="width: ${pct}%"></div>
+                  </div>
+                  <span class="bar-pct">${pct}%</span>
+                </td>
+              </tr>`;
+              })
+              .join("")}
+          </tbody>
+        </table>
+      </div>
+    </div>`;
+
+        if (!silent) {
+          sec.scrollIntoView({ behavior: "smooth", block: "start" });
+        }
+      }
+
+      function resetAll() {
+        sems.length = 0;
+        idCounter = 0;
+        clearResult();
+        for (let i = 0; i < 6; i++) addSemester();
+      }
+
+      // Init with 6 semesters (university defaults)
+      for (let i = 0; i < 6; i++) addSemester();
+    </script>
+  </body>
+</html>
